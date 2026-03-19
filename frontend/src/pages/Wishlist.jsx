@@ -3,10 +3,12 @@ import wishlistService from "../services/wishlist.service";
 import ProductCard from "../components/ProductCard";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Skeleton from "@mui/material/Skeleton";
+import { useTranslation } from "../hooks/useTranslation";
 
 function Wishlist() {
   const [products, setProducts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { tr } = useTranslation();
 
   useEffect(() => {
     wishlistService.getWishlist()
@@ -17,9 +19,7 @@ function Wishlist() {
   return (
     <div className="flex-1 bg-gray-50 py-10 px-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold text-violet-600 text-center mb-8">
-          Таңдаулылар
-        </h1>
+        <h1 className="text-2xl font-bold text-violet-600 text-center mb-8">{tr.wishlist}</h1>
 
         {loading && (
           <div className="flex flex-wrap gap-6 justify-center">
@@ -36,7 +36,7 @@ function Wishlist() {
         {products && products.length === 0 && (
           <div className="text-center text-gray-400 py-20">
             <FavoriteBorderIcon style={{ fontSize: 48 }} className="mb-3 text-gray-300" />
-            <p className="text-lg font-medium">Таңдаулылар жоқ</p>
+            <p className="text-lg font-medium">{tr.wishlistEmpty}</p>
           </div>
         )}
 

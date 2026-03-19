@@ -100,11 +100,16 @@ function AddProduct() {
 
             <div className="flex flex-col space-y-2">
               {images.map((image, index) => (
-                <input type="url" placeholder="image url" onChange={(e) => setImages((images) => {
-                    const newImages = images.slice(0);
-                    newImages[index] = e.target.value;
-                    return newImages;
-                })} />
+                <div key={index} className="flex gap-2 items-center">
+                  <input type="url" placeholder="image url" onChange={(e) => setImages((images) => {
+                      const newImages = images.slice(0);
+                      newImages[index] = e.target.value;
+                      return newImages;
+                  })} />
+                  {images.length > 1 && (
+                    <button type="button" onClick={() => setImages(images.filter((_, i) => i !== index))} className="text-red-500 font-bold px-2">✕</button>
+                  )}
+                </div>
               ))}
 
               <button className="text-white bg-black rounded p-2 self-center" onClick={() => setImages([...images, ""])}>
@@ -127,15 +132,24 @@ function AddProduct() {
           </div>
 
           <div>
-            <label htmlFor="">Жеңілдік пайызы </label>
+            <label htmlFor="">Жынысы</label>
+            <select onChange={(e) => setProduct({...product, gender: e.target.value || null})}>
+              <option value="">Таңдамау</option>
+              <option value="male">Ерлер</option>
+              <option value="female">Әйелдер</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="">Жеңілдік пайызы (%) </label>
             <input
               type="number"
               min={0}
+              max={99}
               name=""
               id=""
-              required
-              placeholder="discount percentage"
-              onChange={(e) => setProduct({...product, discountPercentage: e.target.value})}
+              placeholder="мысалы: 36"
+              onChange={(e) => setProduct({...product, discount: e.target.value ? Number(e.target.value) : null})}
             />
           </div>
 

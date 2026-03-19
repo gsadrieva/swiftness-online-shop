@@ -195,7 +195,7 @@ class ProductRepository {
 
   static async addProduct(product) {
     const response = await pool.query(
-      "INSERT INTO products (title, description, price, thumbnail, images, category, brand, stock, discount_percentage) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
+      "INSERT INTO products (title, description, price, thumbnail, images, category, brand, stock, discount_percentage, discount, gender) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         product.title,
         product.description,
@@ -206,6 +206,8 @@ class ProductRepository {
         product.brand,
         product.stock,
         product.discountPercentage,
+        product.discount ?? null,
+        product.gender ?? null,
       ]
     );
 
@@ -218,7 +220,7 @@ class ProductRepository {
 
   static async updateProduct(id, product) {
     const response = await pool.query(
-      "UPDATE products SET title = $1, description = $2, price = $3, thumbnail = $4, images = $5, category = $6, brand = $7, stock = $8, discount_percentage = $9 WHERE id = $10 RETURNING *",
+      "UPDATE products SET title = $1, description = $2, price = $3, thumbnail = $4, images = $5, category = $6, brand = $7, stock = $8, discount_percentage = $9, discount = $10, gender = $11 WHERE id = $12 RETURNING *",
       [
         product.title,
         product.description,
@@ -229,6 +231,8 @@ class ProductRepository {
         product.brand,
         product.stock,
         product.discountPercentage,
+        product.discount ?? null,
+        product.gender ?? null,
         id,
       ]
     );

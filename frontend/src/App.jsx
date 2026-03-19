@@ -21,6 +21,7 @@ import Confidential from "./pages/Confidential";
 import Wishlist from "./pages/Wishlist";
 import { useContext } from "react";
 import UserContext from "./context/user";
+import LanguageProvider from "./context/LanguageProvider";
 
 function AdminRoute({ children }) {
   const { user, loading } = useContext(UserContext);
@@ -30,9 +31,17 @@ function AdminRoute({ children }) {
   return children;
 }
 
+function PrivateRoute({ children }) {
+  const { user, loading } = useContext(UserContext);
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" />;
+  return children;
+}
+
 function App() {
   return (
     <div>
+      <LanguageProvider>
       <UserProvider>
         <CartProvider>
           <Routes>
@@ -42,11 +51,11 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Registration />} />
               <Route path="/products/:id" element={<ProductDetails />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/purchases" element={<Purchases />} />
+              <Route path="/cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
+              <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
+              <Route path="/purchases" element={<PrivateRoute><Purchases /></PrivateRoute>} />
+              <Route path="/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
               <Route path="/confidential" element={<Confidential />} />
-              <Route path="/wishlist" element={<Wishlist />} />
 
             </Route>
             <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -59,7 +68,7 @@ function App() {
           </Routes>
         </CartProvider>
       </UserProvider>
-      
+      </LanguageProvider>
     </div>
   );
 }

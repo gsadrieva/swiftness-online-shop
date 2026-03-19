@@ -7,11 +7,13 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
+import { useTranslation } from "../hooks/useTranslation";
 
 function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { updateCart } = useContext(CartContext);
+  const { tr } = useTranslation();
   const selectedPlan = location.state?.selectedPlan ?? null;
   const total = location.state?.total ?? 0;
 
@@ -31,7 +33,7 @@ function Checkout() {
   function checkout(e) {
     e.preventDefault();
     if (!orderDetails.paymentMethod || !orderDetails.deliveryTime || !orderDetails.address) {
-      alert("Барлық өрістерді толтырыңыз");
+      alert(tr.fillAll);
       return;
     }
     orderService
@@ -39,7 +41,7 @@ function Checkout() {
       .then((res) => res.status)
       .then((status) => {
         if (status == 200) {
-          alert("Сіздің тапсырысыңыз орналастырылды");
+          alert(tr.orderPlaced);
           updateCart();
           navigate("/purchases");
         }
@@ -50,14 +52,14 @@ function Checkout() {
   return (
     <div className="flex-1 w-full flex justify-center items-start py-12 px-4 bg-gray-50">
       <form onSubmit={checkout} className="w-full max-w-lg space-y-5">
-        <h1 className="text-2xl font-bold text-violet-600 text-center">Тапсырысты рәсімдеу</h1>
+        <h1 className="text-2xl font-bold text-violet-600 text-center">{tr.checkoutTitle}</h1>
 
         {/* Төлем жоспары */}
         <div className="bg-violet-50 rounded-2xl border border-violet-100 p-5 flex items-center justify-between">
           <div className="flex items-center gap-2 text-violet-700">
             <ReceiptOutlinedIcon fontSize="small" />
             <span className="font-semibold text-sm">
-              {selectedPlan ? `Бөліп төлеу: 0-0-${selectedPlan}` : 'Бірден төлеу'}
+              {selectedPlan ? tr.installmentLabel(selectedPlan) : tr.fullPayLabel}
             </span>
           </div>
           <span className="font-bold text-violet-600">
@@ -69,12 +71,12 @@ function Checkout() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
           <div className="flex items-center gap-2 text-violet-600 font-semibold">
             <LocationOnOutlinedIcon fontSize="small" />
-            <span>Жеткізу мекенжайы</span>
+            <span>{tr.address}</span>
           </div>
           <input
             type="text"
             required
-            placeholder="Сіздің мекен-жайыңыз"
+            placeholder={tr.addressPlaceholder}
             className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-violet-400 transition-colors"
             onChange={(e) => setOrderDetails({ ...orderDetails, address: e.target.value })}
           />
@@ -84,7 +86,7 @@ function Checkout() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
           <div className="flex items-center gap-2 text-violet-600 font-semibold">
             <AccessTimeOutlinedIcon fontSize="small" />
-            <span>Жеткізу күні мен уақыты</span>
+            <span>{tr.deliveryTime}</span>
           </div>
           <input
             type="datetime-local"
@@ -99,14 +101,14 @@ function Checkout() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
           <div className="flex items-center gap-2 text-violet-600 font-semibold">
             <CreditCardOutlinedIcon fontSize="small" />
-            <span>Төлем әдісі</span>
+            <span>{tr.payment}</span>
           </div>
           <select
             className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-violet-400 transition-colors text-gray-700"
             onChange={(e) => setOrderDetails({ ...orderDetails, paymentMethod: e.target.value })}
           >
-            <option value="online">Несіе картасы арқылы онлайн</option>
-            {!selectedPlan && <option value="cash">Жеткізу кезінде қолма-қол ақша</option>}
+            <option value="online">{tr.cardOnline}</option>
+            {!selectedPlan && <option value="cash">{tr.cash}</option>}
           </select>
 
           {orderDetails.paymentMethod === "online" && (
@@ -137,18 +139,14 @@ function Checkout() {
                   placeholder="CVV"
                   maxLength={3}
                   className="w-1/2 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-violet-400 transition-colors"
-                  onChange={(e) => {
-                    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3);
-                  }}
+                  onChange={(e) => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3); }}
                 />
               </div>
               <input
                 type="text"
-                placeholder="Карточка ұстаушының аты-жөні"
+                placeholder={tr.cardHolder}
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-violet-400 transition-colors"
-                onChange={(e) => {
-                  e.target.value = e.target.value.replace(/[0-9]/g, "");
-                }}
+                onChange={(e) => { e.target.value = e.target.value.replace(/[0-9]/g, ""); }}
               />
             </div>
           )}
@@ -158,7 +156,7 @@ function Checkout() {
           type="submit"
           className="w-full bg-violet-600 text-white py-3 rounded-2xl font-semibold hover:bg-violet-700 transition-colors shadow-md shadow-violet-200"
         >
-          Тапсырысты растаңыз
+          {tr.confirm}
         </button>
       </form>
     </div>

@@ -5,6 +5,7 @@ import CartProduct from "../components/CartProduct";
 import CartContext from "../context/cart";
 import { useNavigate } from "react-router-dom";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import { useTranslation } from "../hooks/useTranslation";
 
 function Cart() {
   const [cart, setCart] = useState(null);
@@ -13,6 +14,7 @@ function Cart() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const { updateCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const { tr } = useTranslation();
 
   function updateProduct(id, quantity) {
     cartService.updateCart(id, quantity)
@@ -38,11 +40,10 @@ function Cart() {
       <div className="max-w-5xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2">
           <ShoppingBagOutlinedIcon className="text-violet-600" />
-          Себет
+          {tr.cart}
         </h1>
 
         <div className="flex gap-6 items-start">
-          {/* Список товаров */}
           <div className="flex-1 space-y-4">
             {loading && Array.from(new Array(3)).map((_, i) => (
               <div key={i} className="bg-white rounded-2xl p-4 flex gap-4">
@@ -58,7 +59,7 @@ function Cart() {
             {cart && cart.length === 0 && (
               <div className="bg-white rounded-2xl p-12 text-center text-gray-400">
                 <ShoppingBagOutlinedIcon style={{ fontSize: 48 }} className="mb-3 text-gray-300" />
-                <p className="text-lg font-medium">Себет бос</p>
+                <p className="text-lg font-medium">{tr.empty}</p>
               </div>
             )}
 
@@ -72,33 +73,30 @@ function Cart() {
             ))}
           </div>
 
-          {/* Итог */}
           {cart && cart.length > 0 && (
             <div className="w-80 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5 sticky top-24">
-              <h2 className="text-lg font-bold text-gray-800">Тапсырыс</h2>
+              <h2 className="text-lg font-bold text-gray-800">{tr.total}</h2>
 
               <div className="flex justify-between text-sm text-gray-500">
-                <span>Тауарлар ({cart.length} дана)</span>
+                <span>{tr.items(cart.length)}</span>
                 <span>{total} тг</span>
               </div>
 
               <div className="border-t border-gray-100 pt-4 flex justify-between font-bold text-gray-800">
-                <span>Барлығы</span>
+                <span>{tr.total}</span>
                 <span className="text-violet-600 text-lg">{total} тг</span>
               </div>
 
               <div className="bg-violet-50 rounded-xl p-4 space-y-2">
-                <p className="text-xs font-semibold text-violet-600 mb-2">Төлем түрін таңдаңыз</p>
+                <p className="text-xs font-semibold text-violet-600 mb-2">{tr.paymentType}</p>
 
                 <button
                   onClick={() => setSelectedPlan(null)}
                   className={`w-full flex justify-between items-center px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                    selectedPlan === null
-                      ? "bg-violet-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-violet-100"
+                    selectedPlan === null ? "bg-violet-600 text-white" : "bg-white text-gray-700 hover:bg-violet-100"
                   }`}
                 >
-                  <span>Бірден төлеу</span>
+                  <span>{tr.payFull}</span>
                   <span>{total} тг</span>
                 </button>
 
@@ -107,9 +105,7 @@ function Cart() {
                     key={m}
                     onClick={() => setSelectedPlan(m)}
                     className={`w-full flex justify-between items-center px-3 py-2 rounded-lg text-sm transition-colors ${
-                      selectedPlan === m
-                        ? "bg-violet-600 text-white font-semibold"
-                        : "bg-white text-gray-700 hover:bg-violet-100"
+                      selectedPlan === m ? "bg-violet-600 text-white font-semibold" : "bg-white text-gray-700 hover:bg-violet-100"
                     }`}
                   >
                     <span>0-0-{m}</span>
@@ -122,7 +118,7 @@ function Cart() {
                 onClick={() => navigate("/checkout", { state: { selectedPlan, total } })}
                 className="w-full bg-violet-600 text-white py-3 rounded-xl font-semibold hover:bg-violet-700 transition-colors shadow-md shadow-violet-200"
               >
-                {selectedPlan ? `Тапсырысты бөліп төлеу 0-0-${selectedPlan}` : `Тапсырыс беру · ${total} тг`}
+                {selectedPlan ? tr.installment(selectedPlan) : tr.orderBtn(total)}
               </button>
             </div>
           )}

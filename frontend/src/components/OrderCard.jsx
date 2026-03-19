@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useTranslation } from "../hooks/useTranslation";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -12,6 +13,7 @@ function OrderCard({ order }) {
   const { updateCart } = useContext(CartContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { tr } = useTranslation();
 
   async function repeatOrder() {
     setLoading(true);
@@ -52,7 +54,7 @@ function OrderCard({ order }) {
         </div>
         <span className="flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">
           <CheckCircleOutlineIcon style={{ fontSize: 14 }} />
-          Ақылы
+          {tr.paid}
         </span>
       </div>
 
@@ -83,7 +85,7 @@ function OrderCard({ order }) {
           <CreditScoreOutlinedIcon style={{ fontSize: 18 }} />
           <span>
             0-0-{order.installment_months} бөліп төлеу:{" "}
-            <strong>{monthly} тг × {order.installment_months} ай</strong>
+            <strong>{monthly} тг × {order.installment_months} {tr.lang === 'en' ? 'mo.' : tr.lang === 'ru' ? 'мес.' : 'ай'}</strong>
           </span>
         </div>
       )}
@@ -104,7 +106,7 @@ function OrderCard({ order }) {
             className="flex items-center gap-1 text-xs font-semibold text-violet-600 border border-violet-200 bg-white hover:bg-violet-50 px-3 py-1.5 rounded-xl transition-colors disabled:opacity-50"
           >
             <ReplayOutlinedIcon style={{ fontSize: 15 }} />
-            {loading ? "..." : "Қайталау"}
+            {loading ? "..." : tr.repeat}
           </button>
         </div>
       </div>

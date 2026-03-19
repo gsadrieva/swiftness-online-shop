@@ -6,6 +6,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useTranslation } from "../hooks/useTranslation";
 
 function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -14,6 +15,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const { tr } = useTranslation();
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -21,11 +23,7 @@ function Login() {
     userService.login(credentials)
       .then((res) => res.status)
       .then((status) => {
-        if (status == 200) {
-          setLoading(false);
-          updateUser();
-          navigate("/");
-        }
+        if (status == 200) { setLoading(false); updateUser(); navigate("/"); }
       })
       .catch((err) => {
         setError(err.message);
@@ -39,19 +37,19 @@ function Login() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800">Қош келдіңіз!</h1>
-            <p className="text-sm text-gray-400 mt-1">Аккаунтыңызға кіріңіз</p>
+            <h1 className="text-2xl font-bold text-gray-800">{tr.welcome}</h1>
+            <p className="text-sm text-gray-400 mt-1">{tr.loginSubtitle}</p>
           </div>
 
           {error && (
             <div className="bg-red-50 text-red-500 text-sm px-4 py-3 rounded-xl">
-              {error}. Қайталап көріңіз!
+              {error}. {tr.loginError}
             </div>
           )}
 
           <form className="space-y-4" onSubmit={submitForm}>
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Электрондық пошта</label>
+              <label className="text-sm font-medium text-gray-700">{tr.email}</label>
               <div className="relative flex items-center">
                 <EmailOutlinedIcon className="absolute left-3 text-gray-400" fontSize="small" />
                 <input
@@ -67,7 +65,7 @@ function Login() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Құпиясөз</label>
+              <label className="text-sm font-medium text-gray-700">{tr.password}</label>
               <div className="relative flex items-center">
                 <LockOutlinedIcon className="absolute left-3 text-gray-400" fontSize="small" />
                 <input
@@ -90,15 +88,13 @@ function Login() {
               disabled={loading}
               className="w-full bg-violet-600 text-white py-2.5 rounded-xl font-semibold hover:bg-violet-700 transition-colors shadow-md shadow-violet-200 mt-2"
             >
-              {loading ? "Жүктелуде..." : "Кіру"}
+              {loading ? tr.loading : tr.loginBtn}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-400">
-            Есептік жазбаңыз жоқ па?{" "}
-            <Link to="/register" className="text-violet-600 font-semibold hover:underline">
-              Тіркелу
-            </Link>
+            {tr.noAccount}{" "}
+            <Link to="/register" className="text-violet-600 font-semibold hover:underline">{tr.register}</Link>
           </p>
         </div>
       </div>

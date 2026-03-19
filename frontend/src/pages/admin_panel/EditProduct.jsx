@@ -153,17 +153,21 @@ function EditProduct() {
 
               <div className="flex flex-col space-y-2">
                 {product.images.map((image, index) => (
-                  <input
-                    type="url"
-                    placeholder="image url"
-                    value={image}
-                    onChange={(e) => {
+                  <div key={index} className="flex gap-2 items-center">
+                    <input
+                      type="url"
+                      placeholder="image url"
+                      value={image}
+                      onChange={(e) => {
                         const newImages = product.images.slice(0);
                         newImages[index] = e.target.value;
-                        setProduct({...product, images: newImages})
-                      }
-                    }
-                  />
+                        setProduct({...product, images: newImages});
+                      }}
+                    />
+                    {product.images.length > 1 && (
+                      <button type="button" onClick={() => setProduct({...product, images: product.images.filter((_, i) => i !== index)})} className="text-red-500 font-bold px-2">✕</button>
+                    )}
+                  </div>
                 ))}
 
                 <button
@@ -192,17 +196,29 @@ function EditProduct() {
             </div>
 
             <div>
-              <label htmlFor="">Жеңілдік пайызы</label>
+              <label htmlFor="">Жынысы</label>
+              <select
+                value={product.gender || ""}
+                onChange={(e) => setProduct({ ...product, gender: e.target.value || null })}
+              >
+                <option value="">Таңдамау</option>
+                <option value="male">Ерлер</option>
+                <option value="female">Әйелдер</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="">Жеңілдік пайызы (%) — міндетті емес</label>
               <input
                 type="number"
-                min={0}
+                min={1}
+                max={99}
                 name=""
                 id=""
-                required
-                value={parseInt(product.discount_percentage)}
-                placeholder="discount percentage"
+                value={product.discount ?? ""}
+                placeholder="мысалы: 36"
                 onChange={(e) =>
-                  setProduct({ ...product, discount_percentage: e.target.value })
+                  setProduct({ ...product, discount: e.target.value ? Number(e.target.value) : null })
                 }
               />
             </div>

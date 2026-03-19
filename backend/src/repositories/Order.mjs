@@ -17,6 +17,15 @@ class OrderRepository {
         ])
       )
     );
+    // Уменьшаем stock
+    await Promise.all(
+      products.map((product) =>
+        pool.query(
+          "UPDATE products SET stock = GREATEST(stock - $1, 0) WHERE id = $2",
+          [product.quantity, product.id]
+        )
+      )
+    );
     const orderDetails = (await pool.query(
       "select * from order_details where order_id = $1", [newOrder.id])).rows;
     return  {...newOrder, products: orderDetails };
