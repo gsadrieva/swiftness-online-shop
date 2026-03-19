@@ -3,8 +3,8 @@ import pool from "../db.mjs";
 class OrderRepository {
   static async createOrder(user, products, order) {
     const newOrder = (await pool.query(
-      "INSERT INTO orders (user_id, address, delivery_time, payment_method) VALUES ($1, $2, $3, $4) RETURNING *",
-      [user.id, order.address, order.deliveryTime, order.paymentMethod]
+      "INSERT INTO orders (user_id, address, delivery_time, payment_method, installment_months) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [user.id, order.address, order.deliveryTime, order.paymentMethod, order.installmentMonths ?? null]
     )).rows[0];
     const query =
       "INSERT INTO order_details (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *";

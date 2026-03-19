@@ -24,7 +24,7 @@ class CartRepository {
     }
     static async getCartProducts(user) {
         const response = await pool.query(
-            "SELECT p.*, cp.* FROM cart_product cp JOIN products p ON cp.product_id = p.id WHERE cp.cart_id = (SELECT id FROM user_cart WHERE user_id = $1)",
+            "SELECT p.*, cp.quantity, cp.product_id FROM cart_product cp JOIN products p ON cp.product_id = p.id WHERE cp.cart_id = (SELECT id FROM user_cart WHERE user_id = $1)",
             [user.id]
         );
 
@@ -33,7 +33,7 @@ class CartRepository {
 
     static async addProduct(cartId, productId, quantity) { 
         const response = await pool.query(
-            "INSERT INTO cart_product (cart_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *",
+            "INSERT INTO cart_product (cart_id, product_id, quantity) VALUES ($1, $2, $3) ON CONFLICT (cart_id, product_id) DO UPDATE SET quantity = cart_product.quantity + EXCLUDED.quantity RETURNING *",
             [cartId, productId, quantity]
         );
         if (!response.rows.length) {

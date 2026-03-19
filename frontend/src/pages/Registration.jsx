@@ -1,26 +1,25 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import UserContext from "../context/user";
-
+import API from "../api/axios.config";
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 function Registration() {
-  const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
-    firstname: "",
-    lastname: "",
-  });
+  const [credentials, setCredentials] = useState({ email: "", password: "", firstname: "", lastname: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { updateUser } = useContext(UserContext); 
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const submitForm = (e) => {
     e.preventDefault();
     setLoading(true);
-    axios
-      .post("http://localhost:8000/register", credentials)
+    API.post("/auth/register", credentials)
       .then((res) => res.status)
       .then((status) => {
         if (status == 200) {
@@ -30,150 +29,113 @@ function Registration() {
         }
       })
       .catch((err) => {
-        setError(err.message);
-        setCredentials({
-          email: "",
-          password: "",
-          firstname: "",
-          lastname: ""
-        });
+        setError(err.response?.data?.[0]?.msg || err.message);
+        setCredentials({ email: "", password: "", firstname: "", lastname: "" });
         setLoading(false);
       });
   };
 
   return (
-    
-    <div
-      className={`flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 ${
-        loading ? "opacity-50 " : "opacity-100"
-      }`}
-    >
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        {error && (
-          <div className="text-red-900 text-xl ">
-            {error}. Қайталап көріңіз!
-          </div>
-        )}
-        <form className="space-y-6" onSubmit={submitForm}>
-          <div>
-            <label
-              htmlFor="firstname"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Аты-жөні
-            </label>
-            <div className="mt-2">
-              <input
-                placeholder="Аты-жөніңіз"
-                id="firstname"
-                name="firstname"
-                type="text"
-                autoComplete="text"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                disabled={loading}
-                value={credentials.firstname}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, firstname: e.target.value })
-                }
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="lastname"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-             Тегі
-            </label>
-            <div className="mt-2">
-              <input
-                placeholder="тегіңіз"
-                id="lastname"
-                name="lastname"
-                type="text"
-                value={credentials.lastname}
-                disabled={loading}
-                autoComplete="lastname"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={(e) =>
-                  setCredentials({ ...credentials, lastname: e.target.value })
-                }
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-             Электрондық пошта
-            </label>
-            <div className="mt-2">
-              <input
-                placeholder="электрондық поштаңыз"
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={credentials.email}
-                disabled={loading}
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={(e) =>
-                  setCredentials({ ...credentials, email: e.target.value })
-                }
-              />
-            </div>
+    <div className={`flex-1 flex items-center justify-center bg-gray-50 py-12 px-4 ${loading ? "opacity-50" : ""}`}>
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-800">Тіркелу</h1>
+            <p className="text-sm text-gray-400 mt-1">Жаңа аккаунт жасаңыз</p>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Құпиясөз
-              </label>
+          {error && (
+            <div className="bg-red-50 text-red-500 text-sm px-4 py-3 rounded-xl">
+              {error}. Қайталап көріңіз!
             </div>
-            <div className="mt-2">
-              <input
-               placeholder="құпиясөзді еңгізіңіз"
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={credentials.password}
-                disabled={loading}
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
-                }
-              />
+          )}
+
+          <form className="space-y-4" onSubmit={submitForm}>
+            <div className="flex gap-3">
+              <div className="space-y-1 flex-1">
+                <label className="text-sm font-medium text-gray-700">Аты</label>
+                <div className="relative flex items-center">
+                  <PersonOutlinedIcon className="absolute left-3 text-gray-400" fontSize="small" />
+                  <input
+                    type="text"
+                    placeholder="Атыңыз"
+                    required
+                    disabled={loading}
+                    value={credentials.firstname}
+                    onChange={(e) => setCredentials({ ...credentials, firstname: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-violet-400 transition-colors"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1 flex-1">
+                <label className="text-sm font-medium text-gray-700">Тегі</label>
+                <div className="relative flex items-center">
+                  <PersonOutlinedIcon className="absolute left-3 text-gray-400" fontSize="small" />
+                  <input
+                    type="text"
+                    placeholder="Тегіңіз"
+                    required
+                    disabled={loading}
+                    value={credentials.lastname}
+                    onChange={(e) => setCredentials({ ...credentials, lastname: e.target.value })}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-violet-400 transition-colors"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="text-sm">
-            <Link
-              to="/login"
-              className="font-semibold text-gray-900 hover:text-slate-700"
-            >
-              Есептік жазбаңыз бар ма?
-            </Link>
-          </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Электрондық пошта</label>
+              <div className="relative flex items-center">
+                <EmailOutlinedIcon className="absolute left-3 text-gray-400" fontSize="small" />
+                <input
+                  type="email"
+                  placeholder="example@gmail.com"
+                  required
+                  disabled={loading}
+                  value={credentials.email}
+                  onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-violet-400 transition-colors"
+                />
+              </div>
+            </div>
 
-          <div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700">Құпиясөз</label>
+              <div className="relative flex items-center">
+                <LockOutlinedIcon className="absolute left-3 text-gray-400" fontSize="small" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="············"
+                  required
+                  disabled={loading}
+                  value={credentials.password}
+                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                  className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-violet-400 transition-colors"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 text-gray-400 hover:text-gray-600">
+                  {showPassword ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                </button>
+              </div>
+              <p className="text-xs text-gray-400">Кемінде 8 символ, бас әріп және сан болуы керек</p>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
-              className={`flex w-full justify-center bg-cyan-600 text-white hover:text-cyan-600 hover:bg-sky-100 rounded-md px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600`}
+              className="w-full bg-violet-600 text-white py-2.5 rounded-xl font-semibold hover:bg-violet-700 transition-colors shadow-md shadow-violet-200 mt-2"
             >
-              {loading ? "Жүктелуде" : "Тіркелу"}
+              {loading ? "Жүктелуде..." : "Тіркелу"}
             </button>
-          </div>
-        </form>
+          </form>
+
+          <p className="text-center text-sm text-gray-400">
+            Есептік жазбаңыз бар ма?{" "}
+            <Link to="/login" className="text-violet-600 font-semibold hover:underline">
+              Кіру
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

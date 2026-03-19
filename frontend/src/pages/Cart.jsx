@@ -1,127 +1,134 @@
 import React, { useContext, useEffect, useState } from "react";
 import cartService from "../services/cart.service";
 import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
 import CartProduct from "../components/CartProduct";
 import CartContext from "../context/cart";
 import { useNavigate } from "react-router-dom";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+
 function Cart() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
-  const total = cart
-    ? cart.reduce((acc, p) => acc + p.price * p.quantity, 0)
-    : 0;
+  const total = cart ? cart.reduce((acc, p) => acc + p.price * p.quantity, 0) : 0;
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const { updateCart } = useContext(CartContext);
   const navigate = useNavigate();
 
-
   function updateProduct(id, quantity) {
-    cartService
-      .updateCart(id, quantity)
+    cartService.updateCart(id, quantity)
       .then((res) => res.data)
-      .then((data) => {
-        setCart(data);
-        updateCart();
-      });
+      .then((data) => { setCart(Array.isArray(data) ? data : []); updateCart(); });
   }
 
   function removeProduct(id) {
-    cartService
-      .removeFromCart(id)
+    cartService.removeFromCart(id)
       .then((res) => res.data)
-      .then((data) => {
-        setCart(data);
-        updateCart();
-      });
+      .then((data) => { setCart(Array.isArray(data) ? data : []); updateCart(); });
   }
 
   useEffect(() => {
     setLoading(true);
-    cartService
-      .getCart()
+    cartService.getCart()
       .then((res) => res.data)
-      .then((data) => {
-        setCart(data);
-        setLoading(false);
-      });
+      .then((data) => { setCart(data); setLoading(false); });
   }, []);
 
   return (
-      <div className="flex-1 w-full h-full flex justify-center">
-        <div className="w-[70%] py-5 flex space-x-4">
-          <div className="w-[70%]">
-            <div className="flex flex-col rounded space-y-4">
-              {loading && (
-                <Stack
-                  direction={"row"}
-                  spacing={1}
-                  className="w-full py-6 h-[600px] flex justify-center items-start"
-                >
-                  <Skeleton
-                    variant="rounded"
-                    height={200}
-                    width={200}
-                    className="w-[40%] "
-                  />
+    <div className="flex-1 w-full bg-gray-50 py-10 px-6">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2">
+          <ShoppingBagOutlinedIcon className="text-violet-600" />
+          Себет
+        </h1>
 
-                  <Stack spacing={1}>
-                    <Skeleton variant="rounded" height={30} width={500} />
-                    <Skeleton variant="rounded" width={200} height={30} />
-                    <Skeleton variant="rounded" width={150} height={30} />
-                  </Stack>
+        <div className="flex gap-6 items-start">
+          {/* Список товаров */}
+          <div className="flex-1 space-y-4">
+            {loading && Array.from(new Array(3)).map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl p-4 flex gap-4">
+                <Skeleton variant="rounded" width={96} height={96} />
+                <div className="flex-1 space-y-2">
+                  <Skeleton variant="rounded" height={20} width="60%" />
+                  <Skeleton variant="rounded" height={16} width="30%" />
+                  <Skeleton variant="rounded" height={16} width="20%" />
+                </div>
+              </div>
+            ))}
 
-                  <Stack spacing={1}>
-                    <Skeleton variant="rounded"width={200} height={40} />
-                    <Skeleton variant="rounded" width={200} height={40} />
-                    <Skeleton variant="rounded" width={200} height={40} />
-                  </Stack>
-                </Stack>
-              )}
-              {cart &&
-                cart.map((cartProduct) => (
-                  <CartProduct
-                    product={cartProduct}
-                    update={updateProduct}
-                    remove={removeProduct}
-                  />
-                ))}
-            </div>
+            {cart && cart.length === 0 && (
+              <div className="bg-white rounded-2xl p-12 text-center text-gray-400">
+                <ShoppingBagOutlinedIcon style={{ fontSize: 48 }} className="mb-3 text-gray-300" />
+                <p className="text-lg font-medium">Себет бос</p>
+              </div>
+            )}
+
+            {cart && cart.map((cartProduct) => (
+              <CartProduct
+                key={cartProduct.id}
+                product={cartProduct}
+                update={updateProduct}
+                remove={removeProduct}
+              />
+            ))}
           </div>
-          {cart && (
-            <div className="w-[30%] flex flex-col space-y-3">
-              <h1 className="text-2xl font-bold text-violet-600">Сіздің тапсырысыңыз</h1>
-              <div className="flex space-x-2 text-xl font-bold w-full justify-between">
-                <p className="text-violet-600">Барлығы: </p>
-                <p className="text-violet-600">{total}тг</p>
+
+          {/* Итог */}
+          {cart && cart.length > 0 && (
+            <div className="w-80 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5 sticky top-24">
+              <h2 className="text-lg font-bold text-gray-800">Тапсырыс</h2>
+
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Тауарлар ({cart.length} дана)</span>
+                <span>{total} тг</span>
               </div>
-              <div>
-                <p className="text-violet-600">{cart.length} зат</p>
+
+              <div className="border-t border-gray-100 pt-4 flex justify-between font-bold text-gray-800">
+                <span>Барлығы</span>
+                <span className="text-violet-600 text-lg">{total} тг</span>
               </div>
-              <div className="text-sm text-slate-600 text-end text-violet-600">
-                <div className="flex justify-between">
-                  <p>0-0-3</p>
-                  <p>{total / 3}тг x 3 ай</p>
-                </div>
-                <div className="flex justify-between">
-                  <p>0-0-6</p>
-                  <p>{total / 6}тг x 6 ай</p>
-                </div>
-                <div className="flex justify-between">
-                  <p>0-0-12</p>
-                  <p>{total / 12}тг x 12 ай</p>
-                </div>
-                <div className="flex justify-between">
-                  <p>0-0-24</p>
-                  <p>{total / 24}тг х 24 ай</p>
-                </div>
+
+              <div className="bg-violet-50 rounded-xl p-4 space-y-2">
+                <p className="text-xs font-semibold text-violet-600 mb-2">Төлем түрін таңдаңыз</p>
+
+                <button
+                  onClick={() => setSelectedPlan(null)}
+                  className={`w-full flex justify-between items-center px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    selectedPlan === null
+                      ? "bg-violet-600 text-white"
+                      : "bg-white text-gray-700 hover:bg-violet-100"
+                  }`}
+                >
+                  <span>Бірден төлеу</span>
+                  <span>{total} тг</span>
+                </button>
+
+                {[3, 6, 12, 24].map(m => (
+                  <button
+                    key={m}
+                    onClick={() => setSelectedPlan(m)}
+                    className={`w-full flex justify-between items-center px-3 py-2 rounded-lg text-sm transition-colors ${
+                      selectedPlan === m
+                        ? "bg-violet-600 text-white font-semibold"
+                        : "bg-white text-gray-700 hover:bg-violet-100"
+                    }`}
+                  >
+                    <span>0-0-{m}</span>
+                    <span>{Math.round(total / m)} тг × {m} ай</span>
+                  </button>
+                ))}
               </div>
-              <button className="w-full mx-4 text-violet-600 bg-sky-100 rounded-lg py-3 hover:text-white hover:bg-violet-600" onClick={() => navigate("/checkout")}>
-              Тапсырыс беру
+
+              <button
+                onClick={() => navigate("/checkout", { state: { selectedPlan, total } })}
+                className="w-full bg-violet-600 text-white py-3 rounded-xl font-semibold hover:bg-violet-700 transition-colors shadow-md shadow-violet-200"
+              >
+                {selectedPlan ? `Тапсырысты бөліп төлеу 0-0-${selectedPlan}` : `Тапсырыс беру · ${total} тг`}
               </button>
             </div>
           )}
         </div>
       </div>
+    </div>
   );
 }
 

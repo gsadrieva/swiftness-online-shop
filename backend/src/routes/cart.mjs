@@ -42,25 +42,27 @@ router.post(
 
 router.patch("/cart/:id", async (req, res) => {
   if (!req.user) {
-    return res.status(401);
+    return res.status(401).send("Unauthorized");
   }
   const { id } = req.params;
   const { quantity } = req.body;
   const cart = await CartRepository.getCart(req.user);
+  if (!cart) return res.status(404).send("Cart not found");
   await CartRepository.updateCartProduct(id, cart.id, quantity);
   const cartProducts = await CartRepository.getCartProducts(req.user);
-  return res.status(200).send(cartProducts);
+  return res.status(200).send(cartProducts ?? []);
 });
 
 router.delete("/cart/:id", async (req, res) => {
   if (!req.user) {
-    return res.status(401);
+    return res.status(401).send("Unauthorized");
   }
   const { id } = req.params;
   const cart = await CartRepository.getCart(req.user);
+  if (!cart) return res.status(404).send("Cart not found");
   await CartRepository.deleteCartProduct(id, cart.id);
   const cartProducts = await CartRepository.getCartProducts(req.user);
-  return res.status(200).send(cartProducts);
+  return res.status(200).send(cartProducts ?? []);
 });
 
 router.delete("/cart", async (req, res) => {

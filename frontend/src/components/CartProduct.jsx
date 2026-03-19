@@ -2,48 +2,43 @@ import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from "@mui/icons-material/Close";
 
 function CartProduct({ product, update, remove }) {
   return (
-    <div className="w-full border-t border-b py-2">
-      <div className="w-full">
-        <div className="flex w-full space-x-2 items-center">
-          <div>
-            <img
-              src={product.thumbnail}
-              alt={product.title}
-              className="w-[100px]"
-            />
-          </div>
-          <div>
-            <p className="text-lg font-bold">{product.title}</p>
-            <p className="text-sm ">{product.brand}</p>
-            <p className="font-semibold flex items-center">
-              {product.price}{"  "}тг
-              <span className="text-slate-600 text-sm">
-                <CloseIcon style={{ width: "14px" }} />{product.quantity}
-              </span>
-            </p>
-          </div>
+    <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-md shadow-violet-100 border border-violet-100 hover:shadow-violet-300 transition-shadow">
+      <img
+        src={product.thumbnail}
+        alt={product.title}
+        className="w-24 h-24 object-contain rounded-xl bg-gray-50 p-1"
+      />
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-gray-800 truncate">{product.title}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{product.brand}</p>
+        <p className="text-violet-600 font-bold mt-1">{product.price} тг</p>
+      </div>
+      <div className="flex flex-col items-end gap-3">
+        <button
+          onClick={() => remove(product.id)}
+          className="text-gray-300 hover:text-red-400 transition-colors"
+        >
+          <DeleteIcon fontSize="small" />
+        </button>
+        <div className="flex items-center gap-2 bg-violet-50 rounded-xl px-2 py-1">
+          <button
+            onClick={() => product.quantity === 1 ? remove(product.id) : update(product.id, product.quantity - 1)}
+            className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-violet-200 transition-colors text-violet-600"
+          >
+            <RemoveIcon style={{ fontSize: 14 }} />
+          </button>
+          <span className="w-6 text-center font-semibold text-gray-700 text-sm">{product.quantity}</span>
+          <button
+            onClick={() => update(product.id, product.quantity + 1)}
+            className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-violet-200 transition-colors text-violet-600"
+          >
+            <AddIcon style={{ fontSize: 14 }} />
+          </button>
         </div>
-        <div className="flex justify-end w-full">
-          <div className="flex text-sm  space-x-1 p-1 h-max">
-            <button className="hover:border hover:border-slate-400 rounded px-1">
-              {product.quantity == 1 ? (
-                <DeleteIcon style={{ width: "18px" }} onClick={() => remove(product.id)} />
-              ) : (
-                <RemoveIcon style={{ width: "14px" }} onClick={() => update(product.id, product.quantity - 1)}/>
-              )}
-            </button>
-            <p className="border border-slate-400 rounded px-2 ">
-              {product.quantity}
-            </p>
-            <button className="hover:border hover:border-slate-400 rounded px-1">
-              {<AddIcon style={{ width: "14px" }} onClick={() => update(product.id, product.quantity + 1)}/>}
-            </button>
-          </div>
-        </div>
+        <p className="text-sm font-semibold text-gray-500">{product.price * product.quantity} тг</p>
       </div>
     </div>
   );

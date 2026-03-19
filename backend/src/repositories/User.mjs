@@ -5,7 +5,7 @@ class UserRepository {
 
   static async getById(id) {
     const response = await pool.query(
-      "SELECT id, email, firstname, lastname FROM users WHERE id=$1",
+      "SELECT id, email, firstname, lastname, role FROM users WHERE id=$1",
       [id]
     );
 
@@ -33,8 +33,8 @@ class UserRepository {
   static async addUser(user) {
     const hashedPassword = hashPassword(user.password);
     const response = await pool.query(
-      "INSERT INTO users (email, password, firstname, lastname) VALUES ($1, $2, $3, $4) RETURNING id, email, firstname, lastname",
-      [user.email, hashedPassword, user.firstname, user.lastname]
+      "INSERT INTO users (email, password, firstname, lastname, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, email, firstname, lastname, role",
+      [user.email, hashedPassword, user.firstname, user.lastname, user.role || "user"]
     );
     return response.rows[0];
   }

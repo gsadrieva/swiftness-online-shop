@@ -4,6 +4,7 @@ import UserContext from "./user";
 
 function UserProvider({ children }) {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       userService
@@ -11,7 +12,9 @@ function UserProvider({ children }) {
         .then((response) => response.data)
         .then((data) => {
           setUser(data);
+          setLoading(false);
         })
+        .catch(() => setLoading(false));
     }, []);
   
     function updateUser() {
@@ -25,7 +28,7 @@ function UserProvider({ children }) {
     }
   
     return (
-      <UserContext.Provider value={{ user, updateUser }}>
+      <UserContext.Provider value={{ user, loading, updateUser }}>
         {children}
       </UserContext.Provider>
     );
