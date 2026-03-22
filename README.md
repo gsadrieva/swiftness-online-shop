@@ -1,38 +1,23 @@
-# 🛍️  Swiftness Online Shop — брендовый интернет-магазин 
+# Online Shop
 
-**Современный интернет-магазин с системой рассрочки и управлением заказами**  
-*Полноценное e-commerce приложение на React + Express + PostgreSQL*
+**Современный брендовый интернет-магазин с системой рассрочки**  
+*React + Express + PostgreSQL*
 
 ---
 
 ## 📋 О проекте
 
-Этот проект — полноценный интернет-магазин. Пользователи могут просматривать каталог, добавлять товары в корзину и избранное, оформлять заказы с выбором плана рассрочки, а также отслеживать историю покупок.
-
-### Основные цели:
-- ✅ Реализовать удобный каталог с фильтрацией по категориям и цене
-- ✅ Создать систему рассрочки 0-0-3 / 0-0-6 / 0-0-12 / 0-0-24
-- ✅ Добавить историю заказов с возможностью повторить заказ
-- ✅ Реализовать избранное (Wishlist)
-- ✅ Разграничить роли пользователей (user / admin)
-- ✅ Сделать современный интерфейс на казахском языке
+Swiftness Online Shop — полноценное e-commerce приложение с каталогом люксовых товаров. Пользователи могут просматривать товары, добавлять в корзину и избранное, оформлять заказы с рассрочкой и отслеживать историю покупок.
 
 ---
 
 ## 🛠 Технологический стек
 
-### Frontend
-- **React 18** + **Vite**
-- **Tailwind CSS** — стилизация
-- **React Router v6** — маршрутизация
-- **Axios** — HTTP клиент
-- **Material UI Icons** — иконки
-
-### Backend
-- **Node.js + Express**
-- **Passport.js** — сессионная аутентификация
-- **express-validator** — валидация
-- **PostgreSQL** — база данных
+| Слой | Технологии |
+|------|-----------|
+| Frontend | React 18, Vite, Tailwind CSS, React Router v6, Axios, MUI Icons, Swiper |
+| Backend | Node.js, Express, Passport.js, express-validator |
+| База данных | PostgreSQL |
 
 ---
 
@@ -40,8 +25,8 @@
 
 ### 1. Клонировать репозиторий
 ```bash
-git clone https://github.com/gsadrieva/onlineshop.git
-cd onlineshop
+git clone https://github.com/gsadrieva/swiftness-online-shop.git
+cd swiftness-online-shop
 ```
 
 ### 2. Запустить backend
@@ -58,50 +43,48 @@ npm install
 npm run dev
 ```
 
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:5173  
 - **Backend API**: http://localhost:8000
-
-### 4. База данных (PostgreSQL)
-```sql
-CREATE TABLE users (id SERIAL PRIMARY KEY, email TEXT, password TEXT, role TEXT DEFAULT 'user');
-CREATE TABLE products (id SERIAL PRIMARY KEY, title TEXT, price INT, brand TEXT, category TEXT, thumbnail TEXT);
-CREATE TABLE user_cart (id SERIAL PRIMARY KEY, user_id INT REFERENCES users(id));
-CREATE TABLE cart_product (cart_id INT, product_id INT, quantity INT, UNIQUE(cart_id, product_id));
-CREATE TABLE orders (id SERIAL PRIMARY KEY, user_id INT, address TEXT, delivery_time TIMESTAMP, payment_method TEXT, installment_months INT, order_date TIMESTAMP DEFAULT NOW());
-CREATE TABLE order_details (order_id INT, product_id INT, quantity INT);
-CREATE TABLE wishlist (id SERIAL PRIMARY KEY, user_id INT, product_id INT);
-```
-
----
 
 ## 📁 Структура проекта
 
 ```
-onlineshop/
+swiftness-online-shop/
 ├── frontend/
+│   ├── public/img/          # Картинки товаров
 │   └── src/
-│       ├── pages/        # Products, Cart, Checkout, Purchases, Wishlist, Login...
-│       ├── components/   # Header, Footer, ProductCard, CartProduct, OrderCard...
-│       ├── services/     # axios-сервисы для API
-│       └── context/      # UserContext, CartContext
+│       ├── pages/           # Home, Products, ProductDetails, Cart, Checkout, Purchases, Wishlist, Login, Registration
+│       ├── components/      # Header, Footer, ProductCard, CartProduct, OrderCard
+│       ├── services/        # axios-сервисы (product, cart, order, wishlist, user)
+│       ├── context/         # UserContext, CartContext, LanguageContext
+│       ├── hooks/           # useTranslation
+│       └── i18n/            # translations.js (kz / ru / en)
 └── backend/
     └── src/
-        ├── routes/       # products, cart, order, wishlist, auth
-        └── repositories/ # Product, Cart, Order, User, Wishlist
+        ├── routes/          # products, cart, order, wishlist, auth
+        └── repositories/    # Product, Cart, Order, User, Wishlist
 ```
 
 ---
 
 ## ✨ Функциональность
 
-### 🗂 Каталог
-- Фильтрация по категориям
-- Слайдер цены от 0 до 1 000 000 ₸
+### Главная страница
+- Секции брендов: Tom Ford, Michael Kors, Cartier
+- Клик по картинке → страница товара
+- Блок преимуществ (доставка, возврат, гарантия, подарочная упаковка)
 
-### 🛒 Корзина
+### Каталог
+- Фильтрация по категориям
+- Фильтр по полу (Ерлер / Әйелдер)
+- Фильтр только со скидками (toggle)
+- Слайдер цены от 0 до 1 000 000 ₸
+- Смена фото при наведении на карточку
+
+### Корзина
 - Добавление / удаление товаров
 - Изменение количества
-- Выбор плана оплаты
+- Выбор плана рассрочки
 
 ### 💳 Рассрочка
 | План | Описание |
@@ -115,25 +98,26 @@ onlineshop/
 ### 📦 Заказы
 - История всех заказов
 - Отображение плана рассрочки
-- Кнопка «Повторить заказ»
+- Кнопка «Қайталау» — повторить заказ
+- Уменьшение остатка stock при оформлении
 
 ### ❤️ Избранное
-- Добавление через иконку сердечка на карточке товара
+- Добавление через иконку сердечка на карточке
 - Отдельная страница `/wishlist`
 
 ### 🔐 Авторизация
-- Регистрация и вход
-- Роль `user` — обычный покупатель
-- Роль `admin` — управление товарами (добавление, редактирование, удаление)
+- Регистрация и вход (сессии через Passport.js)
+- Роль `user` — покупатель
+- Роль `admin` — добавление, редактирование, удаление товаров
 
----
+### 🌐 Мультиязычность
+- Казахский (по умолчанию), Русский, English
+- Переключатель KZ / RU / EN в хедере
+- Язык сохраняется в localStorage
 
-## 🎨 Дизайн
-
-- Фиолетовая цветовая схема (`#7c3aed`)
-- Белые карточки на сером фоне
-- Интерфейс на казахском языке
-- Sticky header с иконками корзины, избранного и профиля
+### 📱 Адаптивность
+- Мобильное меню (бургер)
+- Адаптивные сетки на всех страницах
 
 ---
 
