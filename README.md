@@ -120,7 +120,8 @@ swiftness-online-shop/
 - Адаптивные сетки на всех страницах
 
 ---
+## License
+This portfolio is licensed under the [MIT License](LICENSE) © 2026 gsadrieva
 
-## 👩‍💻 Автор
 
-**Садриева Гулзара** — [github.com/gsadrieva](https://github.com/gsadrieva)
+
